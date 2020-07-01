@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <ToolbarPanel ref="toolbar" />
+    <a-row>
+      <a-col :xs="2" :sm="4">
+        Col
+      </a-col>
+      <a-col :xs="20" :sm="16">
+        Col
+      </a-col>
+      <a-col :xs="2" :sm="4">
+        Col
+      </a-col>
+    </a-row>
   </div>
 </template>
 
 <script>
+import ToolbarPanel from '../components/ToolbarPanel'
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
-  }
+  components: { ToolbarPanel }
 }
 </script>
