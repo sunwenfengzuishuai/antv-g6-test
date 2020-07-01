@@ -1,6 +1,6 @@
 <template>
   <div class="itemPanel">
-    <a-collapse accordion>
+    <a-collapse v-model="activeKeys">
       <a-collapse-panel key="1" header="开始事件">
         <img
           data-item="{clazz:'start',size:'30*30',label:''}"
@@ -108,6 +108,7 @@ export default {
   },
   data() {
     return {
+      activeKeys: ['1', '2', '3', '4', '5'],
       userTaskData: "{clazz:'userTask',size:'80*44',label:'" + '审批节点' + "'}",
       scriptTaskData: "{clazz:'scriptTask',size:'80*44',label:'" + '脚本节点' + "'}",
       javaTaskData: "{clazz:'javaTask',size:'80*44',label:'" + '自定义类节点' + "'}",
