@@ -187,6 +187,7 @@ export default {
       this.graph.fitView(5)
     }
     this.initEvents()
+    this.$refs.addItemPanel.activeKeys = []
   }
 }
 </script>
