@@ -18,7 +18,6 @@ class AddItemPanel {
   }
 
   initPlugin(graph) {
-    console.log('...')
     const parentNode = this.get('container')
     const ghost = createDOM(
       '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"' +
@@ -27,21 +26,17 @@ class AddItemPanel {
     const children = parentNode.querySelectorAll(
       'div.ant-collapse-item>div.ant-collapse-content>.ant-collapse-content-box>img[data-item]'
     )
-    console.log(parentNode)
-    console.log(children)
     each(children, (child) => {
       const addModel = new Function('return ' + child.getAttribute('data-item'))()
       child.addEventListener('dragstart', (e) => {
         e.dataTransfer.setDragImage(ghost, 0, 0)
         graph.set('onDragAddNode', true)
         graph.set('addModel', addModel)
-        console.log(333)
       })
       child.addEventListener('dragend', (e) => {
         graph.emit('canvas:mouseup', e)
         graph.set('onDragAddNode', false)
         graph.set('addModel', null)
-        console.log(444)
       })
     })
   }

@@ -13,7 +13,22 @@
         ></div>
       </a-col>
       <a-col :xs="2" :sm="5">
-        Col
+        <DetailPanel
+          ref="detailPanel"
+          v-if="!isView"
+          :height="height"
+          :model="selectedModel"
+          :readOnly="mode !== 'edit'"
+          :users="users"
+          :groups="groups"
+          :signalDefs="processModel.signalDefs"
+          :messageDefs="processModel.messageDefs"
+          :onChange="
+            (key, val) => {
+              onItemCfgChange(key, val)
+            }
+          "
+        />
       </a-col>
     </a-row>
   </div>
@@ -29,6 +44,7 @@ import CanvasPanel from '../plugins/canvasPanel'
 import ToolbarPanel from '../components/ToolbarPanel'
 import ItemPanel from '../components/ItemPanel'
 import { exportXML } from '../util/bpmn'
+import DetailPanel from '../components/DetailPanel'
 import registerShape from '../shape'
 import registerBehavior from '../behavior'
 registerShape(G6)
@@ -83,7 +99,12 @@ export default {
     },
     users: {
       type: Array,
-      default: () => []
+      default: () => [
+        { id: '1', name: '张三' },
+        { id: '2', name: '李四' },
+        { id: '3', name: '王五' },
+        { id: '4', name: '赵六' }
+      ]
     },
     groups: {
       type: Array,
@@ -106,10 +127,9 @@ export default {
       cmdPlugin: null
     }
   },
-  components: { ToolbarPanel, ItemPanel },
+  components: { ToolbarPanel, ItemPanel, DetailPanel },
   methods: {
     initShape(data) {
-      console.log('initShape')
       if (data && data.nodes) {
         return {
           nodes: data.nodes.map((node) => {
@@ -124,7 +144,6 @@ export default {
       return data
     },
     initEvents() {
-      console.log('initEvents')
       this.graph.on('afteritemselected', (items) => {
         if (items && items.length > 0) {
           const item = this.graph.findById(items[0])
@@ -140,13 +159,32 @@ export default {
         graph.changeSize(page.offsetWidth, height)
       }
       window.addEventListener('resize', this.resizeFunc)
+    },
+    onItemCfgChange(key, value) {
+      const items = this.graph.get('selectedItems')
+      if (items && items.length > 0) {
+        //其他节点属性面板
+        const item = this.graph.findById(items[0])
+        if (this.graph.executeCommand) {
+          this.graph.executeCommand('update', {
+            itemId: items[0],
+            updateModel: { [key]: value }
+          })
+        } else {
+          this.graph.updateItem(item, { [key]: value })
+        }
+        this.selectedModel = { ...item.getModel() }
+      } else {
+        //主流程属性面板
+        const canvasModel = { ...this.processModel, [key]: value }
+        this.selectedModel = canvasModel
+        this.processModel = canvasModel
+      }
     }
   },
   mounted() {
-    console.log(111)
     let plugins = []
     if (!this.isView) {
-      console.log(222)
       this.cmdPlugin = new Command()
       const toolbar = new Toolbar({ container: this.$refs['toolbar'].$el })
       const addItemPanel = new AddItemPanel({ container: this.$refs['addItemPanel'].$el })
@@ -188,6 +226,12 @@ export default {
     }
     this.initEvents()
     this.$refs.addItemPanel.activeKeys = []
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeFunc)
+    this.graph.getNodes().forEach((node) => {
+      node.getKeyShape().stopAnimate()
+    })
   }
 }
 </script>
