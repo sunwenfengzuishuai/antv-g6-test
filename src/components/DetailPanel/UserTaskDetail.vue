@@ -45,18 +45,6 @@
       </div>
       <div v-if="model.assignType === 'person'" class="panelRow">
         <div>候选人：</div>
-        <!-- <el-select
-          style="width:90%; font-size:12px"
-          placeholder="选择候选人"
-          :disabled="readOnly"
-          :value="model.assignValue"
-          :multiple="true"
-          :filterable="true"
-          :filter-method="filterUsers"
-          @change="(e) => onChange('assignValue', e)"
-        >
-          <el-option v-for="user in usersCopy" :key="user.id" :label="user.name" :value="user.id" />
-        </el-select> -->
         <a-select
           placeholder="候选人"
           style="width:90%; font-size: 12px"
@@ -89,15 +77,22 @@
       </div>
       <div class="panelRow">
         <div style="display:inline">到期时间：</div>
-        <!-- <el-date-picker
-          type="datetime"
+        <a-date-picker
           style="width:90%; min-width:null"
+          showTime
           placeholder="请选择日期"
           :disabled="readOnly"
-          :value="model.dueDate"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          @input="(value) => onChange('dueDate', value)"
-        /> -->
+          :format="dateFormat"
+          :value="model.dueDate ? moment(model.dueDate) : null"
+          @change="
+            (date) => {
+              console(date)
+              console(typeof date)
+              onChange('dueDate', momentToTimestamp(date))
+            }
+          "
+        />
+        <br />
       </div>
       <div class="panelRow">
         <a-checkbox
@@ -111,6 +106,7 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 import DefaultDetail from './DefaultDetail'
 export default {
   components: {
@@ -140,47 +136,26 @@ export default {
   },
   data() {
     return {
-      usersCopy: this.users,
-      groupsCopy: this.groups,
       assignTypeSelect: this.model.assignType !== undefined ? this.model.assignType : '', //类型
       assigneeSelect: '', //受理人
       personSelect: [], //候选人
-      persongroupSelect: [] //候选组
+      persongroupSelect: [], //候选组
+      moment: '',
+      dateFormat: 'YYYY/MM/DD HH:mm:ss'
     }
   },
   methods: {
-    filterUsers(input) {
-      if (input) {
-        this.usersCopy = this.users.filter((item) => {
-          if (!!~item.name.indexOf(input) || !!~item.name.toLowerCase().indexOf(input.toLowerCase())) {
-            return true
-          }
-        })
-      } else {
-        this.usersCopy = this.users
-      }
-    },
-    filterGroups(input) {
-      if (input) {
-        this.groupsCopy = this.groups.filter((item) => {
-          if (!!~item.name.indexOf(input) || !!~item.name.toLowerCase().indexOf(input.toLowerCase())) {
-            return true
-          }
-        })
-      } else {
-        this.groupsCopy = this.groups
-      }
-    },
-    handleChange(val) {
-      console.log(val)
-      this.onChange('assignValue', [])
-      this.onChange('assignType', val)
-    },
     console(val) {
       console.log(val)
+    },
+    momentToTimestamp(date) {
+      console.log(date)
+      //return new Date(date._d).getTime()
+      return date.format(this.dateFormat)
     }
   },
   created() {
+    this.moment = moment
     if (this.model.assignType !== undefined) {
       this.assignTypeSelect = this.model.assignType
       if (this.model.assignType === 'assignee') {
