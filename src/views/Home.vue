@@ -247,7 +247,16 @@ export default {
     }
     this.initEvents()
     this.$refs.addItemPanel.activeKeys = []
-    console.log(this.graph)
+    // const data = this.graph.save()
+    // data.nodes[0].label = '买了否冷'
+    // data.nodes[2].dueDate = '2020/07/03 17:12:35'
+    // data.nodes[2].active = true
+    // setTimeout(() => {
+    //   console.log('更新数据')
+    //   this.graph.data(data)
+    //   this.graph.render()
+    //   this.graph.fitView(50)
+    // }, 5000)
   },
   destroyed() {
     window.removeEventListener('resize', this.resizeFunc)
