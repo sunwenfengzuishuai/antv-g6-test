@@ -1,5 +1,25 @@
 <template>
   <div>
+    <a-button
+      v-if="!isView"
+      style="float:right;margin-top:6px;margin-right:6px;"
+      @click="
+        () => {
+          graph.saveXML()
+        }
+      "
+      >导出xml</a-button
+    >
+    <a-button
+      v-if="!isView"
+      style="float:right;margin-top:6px;margin-right:6px;"
+      @click="
+        () => {
+          graph.saveImg()
+        }
+      "
+      >导出图片</a-button
+    >
     <ToolbarPanel ref="toolbar" v-if="!isView" />
     <a-row>
       <a-col :xs="2" :sm="3">
@@ -43,7 +63,7 @@ import AddItemPanel from '../plugins/addItemPanel'
 import CanvasPanel from '../plugins/canvasPanel'
 import ToolbarPanel from '../components/ToolbarPanel'
 import ItemPanel from '../components/ItemPanel'
-import { exportXML } from '../util/bpmn'
+import { exportXML, exportImg } from '../util/bpmn'
 import DetailPanel from '../components/DetailPanel'
 import registerShape from '../shape'
 import registerBehavior from '../behavior'
@@ -217,6 +237,7 @@ export default {
       }
     })
     this.graph.saveXML = (createFile = true) => exportXML(this.graph.save(), this.processModel, createFile)
+    this.graph.saveImg = (createFile = true) => exportImg(this.$refs['canvas'], this.processModel.name, createFile)
     if (this.isView) this.graph.setMode('view')
     else this.graph.setMode(this.mode)
     this.graph.data(this.initShape(this.data))
@@ -226,6 +247,7 @@ export default {
     }
     this.initEvents()
     this.$refs.addItemPanel.activeKeys = []
+    console.log(this.graph)
   },
   destroyed() {
     window.removeEventListener('resize', this.resizeFunc)

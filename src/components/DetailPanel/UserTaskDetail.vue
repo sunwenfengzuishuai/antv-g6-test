@@ -88,7 +88,11 @@
             (date) => {
               console(date)
               console(typeof date)
-              onChange('dueDate', momentToTimestamp(date))
+              if (date) {
+                onChange('dueDate', momentToTimestamp(date))
+              } else {
+                onChange('dueDate', date)
+              }
             }
           "
         />
